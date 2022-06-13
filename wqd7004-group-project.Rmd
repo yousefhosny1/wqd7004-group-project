@@ -22,6 +22,8 @@ output: html_document
 
 
 ```{r}
+# required packages
+
 data = read.csv('data/dirty_dataset_diamond.csv')
 summary(data)
 ```
@@ -133,7 +135,7 @@ library(tidyr)
 data <- filter(data, x > 0, y > 0, z > 0)
 summary(data)
 ```
-From the above summary we can see that all 0's were successfully removed from the x, y and z attributes, and our total data points reduced from 53940 to 53920 which is not that much.
+From the above summary we can see that all 0's were successfully removed from the x, y and z attributes, and our total data points reduced from 53940 to 53855 which is not that much.
 
 To explore the distribution of interval variables, histogram plots are used
 
