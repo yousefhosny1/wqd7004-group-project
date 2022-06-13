@@ -1,31 +1,192 @@
 ---
 title: "WQD7004 Diamond Price Prediction and Clarity Classification Project"
-author: "Yousef, "
+author: "Yousef, put your names here"
 date: '2022-06-13'
 output: html_document
 ---
 
-```{r setup, include=FALSE}
-knitr::opts_chunk$set(echo = TRUE)
+<!-- STUDENT 1 -->
+<center> <h1><b>1.Introduction</b></h1> </center>
+
+
+<!-- STUDENT 1 -->
+<center> <h1><b>2.Dataset</b></h1> </center>
+
+
+<!-- STUDENT 1 -->
+<center> <h1><b>3.Objectives</b></h1> </center>
+
+<center> <h1><b>4.Data Exploration and Preprocessing</b></h1> </center>
+### 4.1 First look at the data 
+
+
+
+```{r}
+data = read.csv('data/dirty_dataset_diamond.csv')
+summary(data)
 ```
-## 1.0 Introduction
 
+From the above code, it's observed that there is an **unnamed attribute**, exploring it further
 
-## 2.0 Dataset
-
-
-## 3.0 Objectives
-
-
-## 4.0 Data Exploration
-```
-data = read.csv('')
+```{r}
+data$Unnamed..0[1:20]
 ```
 
-## 5.0 Data Preprocessing
+
+From the above output we find that it's simply an index to all the diamond observations we have in the data set, thus it can be dropped since it useless for our analysis.
+
+```{r}
+# dropping Unnamed..0 attribute
+drops <- c('Unnamed..0')
+data = data[ , !(names(data) %in% drops)]
+```
+
+### 4.2 Categorical Features Exploration
+
+> In our dataset we have 3 categorical features **cut**, **color**, **clarity**, bar charts will be used to explore them
+
+#### **cut** attribute exploration
+```{r}
+library(ggplot2)
+ggplot(data, aes(x = factor(cut))) +
+    geom_bar()
+```
+
+From the above figure, we can observer that most of the diamond cuts are either *Ideal* or *Very Good*, however it's also seen that there are *Unknown* cuts, this might correspond to missing data. Since the *Unknown* cuts represent only a small fraction of the all cuts, we will consider dropping all observations with that value, this will ensure that our Machine Learning models are more robust.
+```{r}
+data <- subset(data, cut != 'Unknown')
+ggplot(data, aes(x = factor(cut))) +
+    geom_bar()
+```
+
+Exploring if there are any correlation between the *cut* and the *price* of a diamond
+```{r}
+library(scales)
+ggplot(data,
+       aes(y = factor(cut,
+                      labels = c("Fair",
+                                 "Good",
+                                 "Ideal",
+                                 "Premium",
+                                 "Very Good")), 
+           x = price, 
+           color = cut)) +
+  geom_jitter(alpha = 0.7,
+              size = 1.5) + 
+  scale_x_continuous(label = dollar) +
+  labs(title = "Price of Diamond by Cut", 
+       x = "",
+       y = "") +
+  theme_minimal() +
+  theme(legend.position = "none")
+```
+
+From the above figure we can see that diamonds with **Premium** and **Ideal** cuts are laying the end of the price spectrum
+
+#### **color** attribute exploration
+```{r}
+ggplot(data, aes(x = factor(color))) +
+    geom_bar()
+```
+
+From the above figure, we can see that there is almost a normal distribution, and there are no any missing values, moreover, exploring using boxplot we can see if there are any relationships between the **color** attribute and the target variable **price** 
+
+#### **clarity** attribute exploration
+```{r}
+ggplot(data, aes(x = factor(clarity))) +
+    geom_bar()
+```
+
+From the above figure, we can see that there are no any abnormalities or missing values, moreover to explore the relationship between **clarity** and the diamond **price** we will use boxplot
+```{r}
+library(dplyr)
+plotdata <- data %>%
+  group_by(clarity) %>%
+  summarize(n = n(),
+         mean = mean(price),
+         sd = sd(price),
+         se = sd / sqrt(n),
+         ci = qt(0.975, df = n - 1) * sd / sqrt(n))
+
+ggplot(plotdata, 
+       aes(x = clarity, 
+           y = mean, 
+           group = 1)) +
+  geom_point(size = 3) +
+  geom_line() +
+  geom_errorbar(aes(ymin = mean - se, 
+                    ymax = mean + se), 
+                width = .1)
+```
 
 
-## 6.0 Machine Learning
+From the above plot we can see that the average price of diamonds with **Sl2** cuts are the highest while the average price of **VVS1** cuts is the lowest
+
+### 4.2 Interval Features Exploration
+```{r}
+summary(data)
+```
+From the above summary we can see that min value of "x", "y", "z" are zero this indicates that there are faulty values in data that represents dimensionless or 2-dimensional diamonds. So we need to filter out those as it clearly faulty data points. 
+
+```{r}
+library(tidyr)
+data <- filter(data, x > 0, y > 0, z > 0)
+summary(data)
+```
+From the above summary we can see that all 0's were successfully removed from the x, y and z attributes, and our total data points reduced from 53940 to 53920 which is not that much.
+
+To explore the distribution of interval variables, histogram plots are used
+
+```{r}
+library("tidyr")
+library("ggplot2")
+drops <- c('cut', 'clarity', 'color')
+hist_data = data[ , !(names(data) %in% drops)]
+data_long <- hist_data %>%                          # Apply pivot_longer function
+  pivot_longer(colnames(hist_data)) %>% 
+  as.data.frame()
+head(data_long) 
+ggp1 <- ggplot(data_long, aes(x = value)) +    # Draw each column as histogram
+  geom_histogram() + 
+  facet_wrap(~ name, scales = "free")
+ggp1
+```
+
+From the above histogram plots, we can see that the **price** attribute and **caret** attribute are right skewed, thus to ensure that our machine learning models are accurate and robut, data transformations will be conducted.
 
 
-## 7.0 Conclusion
+### 4.3 Data Transformation
+```{r}
+library(superml)
+label <- LabelEncoder$new()
+data$cut <- label$fit_transform(data$cut)
+data$color <- label$fit_transform(data$color)
+data$clarity <- label$fit_transform(data$clarity)
+summary(data)
+```
+
+From the above summary, we can see that all categorical attributes (**cut**, **color**, **calarity**) were encoded into numerical values, this is crucial for the robustness of our machine learning models
+
+Since the data attributes have different scales, standardization is required to ensure that our machine learning model is not facing overfitting/underfitting issues and biases
+```{r}
+model_data = scale(data)
+summary(model_data)
+```
+
+
+Finally, the data will be split into 70% training set and 30% testing set
+```{r}
+set.seed(101) # Set Seed so that same sample can be reproduced 
+
+# Now Selecting 70% of data as sample from total 'n' rows of the data  
+sample <- sample.int(n = nrow(model_data), size = floor(.7*nrow(model_data)), replace = F)
+train_data <- model_data[sample, ]
+test_data  <- model_data[-sample, ]
+```
+
+<!-- STUDENT 3 AND 4  -->
+<center> <h1><b>5.Machine Learning</b></h1> </center> 
+
+
+<!-- STUDENT 1 -->
+<center> <h1><b>6.Conclusion</b></h1> </center>
