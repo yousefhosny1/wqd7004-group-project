@@ -17,7 +17,6 @@ Quality of diamonds that are made into jewelry gems are determined by color, cut
 
 •	**Clarity**: An ideal diamond is free from fracture and particles of foreign material within the gems as low clarity gems tends to degrade the appearance, reduce the strength of the stone thus lower its value.
 
-
 •	**Cut**: Quality of designs and craftsmanship determines the appearance of diamonds that later determines the price. Angles of facets cut, proportions of design and quality of polishing determines face-up appearance, brilliance, scintillation, pattern and fire. A perfect diamond stones are perfectly polished, highly reflective, emit maximum amount of fire, faceted faces equal in size and the edges meet perfectly also identical in shape. 
 
 •	**Carat**: A unit of weight equal to 1/5 of a gram or 1/142 of an ounce. Small diamonds are usually cost less per carat because of its common presences.
@@ -241,47 +240,62 @@ Testing_data <- data[-Sample,] # Test Set
 
 ### 6.1 Linear Regression
 
+The Linear Regression algorithm is used to predict the diamond price and to determine which attribute affects the most.
+
 ```{r}
+#Load training and testing dataset
+trainset = read.csv('data/train_set.csv')
+testset = read.csv('data/test_set.csv')
+
 #Build Training Model
-model <- train(price ~ ., data = Training_data,
+model <- train(price ~ ., data = trainset,
                method = "lm",
-               preProcess=c("scale","center"),
-               trControl= trainControl(method="none")
 )
 
+model 
+
 # Apply model for prediction
-model.training <-predict(model, Training_data) # Apply model to predict the diamond pricing of the training set.
-model.testing <-predict(model, Testing_data) # Apply model to predict the diamond pricing of the testing set.
+model.training <-predict(model, trainset) # Apply model to predict the diamond pricing of the training set.
+model.testing <-predict(model, testset) # Apply model to predict the diamond pricing of the testing set. predicting the test result
 
 # Model performance
   # Scatter plot of Training set
-    plot(Training_data$price,model.training, col = "blue" )
+    plot(trainset$price,model.training, col = "blue" )
   # Scatter plot of Testing set
-    plot(Testing_data$price,model.testing, col = "blue" )
+    plot(testset$price,model.testing, col = "blue" )
 ```
 
-x-axis represent the actual value and y-axis is the predicted value. From the scatter plot above we can see that they are relatively good correlation for both training and testing set. 
+x-axis represent the actual value and y-axis is the predicted value. The first one to predict the diamond pricing of the training set and the second one for test set. From the scatter plot above we can see that they are relatively good correlation for both training and testing set. 
 
 ```{r}
 #Model Performance Summary
     summary(model)
 ```
 
-From the performance summary, the variable that influence model the most is carat because the absolute value is at the most followed by clarity and color. The p value with 3 star indicates that the variables are highly significant in predicting the dependent variable.
+From the performance summary, the variable that influence model the most is carat because the absolute value is at the most. The p value with 3 star indicates that the variables are highly significant in predicting the dependent variable.
 
 ```{r}
 #Calculate Pearson's correlation coefficient of the actual value and predicted value.
 
 #Pearson's correlation coefficient of Training set
- corr_training <- cor.test(Training_data$price,model.training, method = "pearson")
+ corr_training <- cor.test(trainset$price,model.training, method = "pearson")
  corr_training
  
 #Pearson's correlation coefficient of Testing set 
- corr_testing <- cor.test(Testing_data$price,model.testing, method = "pearson")
+ corr_testing <- cor.test(testset$price,model.testing, method = "pearson")
  corr_testing
- 
 ```
-The correlation coefficient between actual and predicted value for both training and testing set is 0.934 and 0.935 respectively, suggests a strong positive correlation. The p value for the test is smaller than 0.05, thus, the null hypothesis is rejected. 
+The correlation coefficient between actual and predicted value for both training and testing set is 0.933 and 0.936 respectively, suggests a strong positive correlation. The p value for the test is smaller than 0.05, thus, the null hypothesis is rejected. We can conclude that our Linear Regression model is statistically significant.
+
+
+```{r}
+#Finding accuracy
+actuals_prediction <- data.frame(cbind(Actual=testset$price, Predicted=model.testing))
+correlation_accuracy <- cor(actuals_prediction)
+head(actuals_prediction)
+```
+Based on the above output, there is not much difference between the predicted and actual value which means it can predict the price quite well.
+
 
 <!-- STUDENT 1 -->
 <center> <h1><b>7.Conclusion</b></h1> </center>
