@@ -1,6 +1,6 @@
 ---
 title: "WQD7004 Diamond Price Prediction and Clarity Classification Project"
-author: "Yousef, Nur Iffahtul Najihah Anuar (17155569), Nadia Nadhirah Mahzan (S2107527), Nurul Shahirah Sha'ari (S2120876)"
+author: "Yousef (S2141806), Nur Iffahtul Najihah Anuar (17155569), Nadia Nadhirah Mahzan (S2107527), Nurul Shahirah Sha'ari (S2120876)"
 date: '2022-06-13'
 output: html_document
 ---
