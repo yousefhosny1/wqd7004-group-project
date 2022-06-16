@@ -1,6 +1,6 @@
 ---
 title: "WQD7004 Diamond Price Prediction and Clarity Classification Project"
-author: "Yousef, put your names here"
+author: "Yousef, Nur Iffahtul Najihah Anuar (17155569), Nadia Nadhirah Mahzan (S2107527), Nurul Shahirah Sha'ari (S2120876)"
 date: '2022-06-13'
 output: html_document
 ---
@@ -8,18 +8,67 @@ output: html_document
 <!-- STUDENT 1 -->
 <center> <h1><b>1.Introduction</b></h1> </center>
 
+Diamond is a solid form of carbon element that present in crystal structure that known as diamond cubic making it unique. Diamond is known with their hardness, good thermal conductivity, high index of refraction, high dispersion, and adamantine luster. The high luster gives diamond the ability to reflect lights that strikes on their surface thus giving them the ‘sparkle’. 
+
+Colour and clarity determine the price of diamond to be selected as jewelry gems.  Jewelry diamonds have the lowest number of specific gravity with it happens to be very close to 3.52 with minimal impurities and defects.
+Quality of diamonds that are made into jewelry gems are determined by color, cut, clarity and carat weight.  Diamond attributes are as follows: 
+
+•	**Colour**: Most quality diamond ranging from colorless to slightly yellow, brown or grey. The highest and most valuable diamonds is the one that are completely colorless. 
+
+•	**Clarity**: An ideal diamond is free from fracture and particles of foreign material within the gems as low clarity gems tends to degrade the appearance, reduce the strength of the stone thus lower its value.
+
+
+•	**Cut**: Quality of designs and craftsmanship determines the appearance of diamonds that later determines the price. Angles of facets cut, proportions of design and quality of polishing determines face-up appearance, brilliance, scintillation, pattern and fire. A perfect diamond stones are perfectly polished, highly reflective, emit maximum amount of fire, faceted faces equal in size and the edges meet perfectly also identical in shape. 
+
+•	**Carat**: A unit of weight equal to 1/5 of a gram or 1/142 of an ounce. Small diamonds are usually cost less per carat because of its common presences.
+
+Another category of diamonds that are currently becoming a trend among diamond jewelry lovers are colored diamonds that occur in variety of hues such as red, pink, yellow, orange, purple, blue, green, and brown. The quality of this diamond’s type is determined by intensity, purity, and quality of their colour, which, the most saturated and vivid colour hold a greater price.
 
 <!-- STUDENT 1 -->
 <center> <h1><b>2.Dataset</b></h1> </center>
 
+•	**Title**: Diamonds 
+
+•	**Year**: 2017
+
+•	**Sources**: Kaggle Website (https://www.kaggle.com/datasets/shivam2503/diamonds?datasetId=1312&sortBy=voteCount&searchQuery=class)
+
+•	**Purpose of Dataset**: A great simple dataset for beginners who is learning to work in data analysis and visualization. 
+
+•	**Content**: Diamond attributes of price, carat, cut, color, clarity, length, width, depth, total depth percentage, width of top of diamonds.
+
+| Attribute      | Description |
+| ----------- | ----------- |
+| price      | in US dollars ($326 - $18,823)       |
+| carat   | weight of the diamond (0.2 - 5.01)        |
+| cut      | quality of the cut (Fair, Good, Very Good, Premium, Ideal)       |
+| color   | diamond colour, from J (worst) to D (best)        |
+| clarity   | a measurement of how clear the diamond is (I1 (worst), SI2, SI1, VS2, VS1, VVS2, VVS1, IF (best))        |
+| x      | length in mm (0 - 10.74)       |
+| y   | width in mm (0 - 58.9)        |
+| z   | depth in mm (0 - 31.8)        |
+| depth   | total depth percentage = z / mean(x, y) = 2 * z / (x + y) (43 - 79)        |
+| table   | width of top of diamond relative to widest point (43 - 95)        |
+
+•	**Structure**: Mainly consist of integers, floating point values also string.
+
+•	**Summary**: This dataset describes attributes of the 54,000 diamonds together with the price so the dataset can be make used to propose suitable linear regression or just normal exploratory data analysis. 
 
 <!-- STUDENT 1 -->
-<center> <h1><b>3.Objectives</b></h1> </center>
+<center> <h1><b>3.Problem Statement</b></h1> </center>
 
-<center> <h1><b>4.Data Exploration and Preprocessing</b></h1> </center>
-### 4.1 First look at the data 
+Diamond gems is one of the most popular gems in entire world. This valuable gem can be worth from as low as hundreds and up to millions. However, no clear understanding of why and how diamond gems can be so expensive. Therefore, exploring which attributes determine the value of a diamond gems may helps with predicting the price of the diamonds.
 
+<center> <h1><b>4.Objectives</b></h1> </center>
 
+**Objectives**
+
+* 1. To predict the price of diamond gems from corresponding attributes. 
+
+* 2. To explore which attributes contribute to the price range in diamond gems. 
+
+<center> <h1><b>5.Data Exploration and Preprocessing</b></h1> </center>
+### 5.1 First look at the data 
 
 ```{r}
 # required packages
@@ -43,7 +92,7 @@ drops <- c('Unnamed..0')
 data = data[ , !(names(data) %in% drops)]
 ```
 
-### 4.2 Categorical Features Exploration
+### 5.2 Categorical Features Exploration
 
 > In our dataset we have 3 categorical features **cut**, **color**, **clarity**, bar charts will be used to explore them
 
@@ -124,7 +173,7 @@ ggplot(plotdata,
 
 From the above plot we can see that the average price of diamonds with **Sl2** cuts are the highest while the average price of **VVS1** cuts is the lowest
 
-### 4.2 Interval Features Exploration
+### 5.3 Interval Features Exploration
 ```{r}
 summary(data)
 ```
@@ -157,7 +206,7 @@ ggp1
 From the above histogram plots, we can see that the **price** attribute and **caret** attribute are right skewed, thus to ensure that our machine learning models are accurate and robut, data transformations will be conducted.
 
 
-### 4.3 Data Transformation
+### 5.4 Data Transformation
 ```{r}
 library(superml)
 label <- LabelEncoder$new()
@@ -178,17 +227,61 @@ summary(model_data)
 
 Finally, the data will be split into 70% training set and 30% testing set
 ```{r}
+library(caret)
 set.seed(101) # Set Seed so that same sample can be reproduced 
 
 # Now Selecting 70% of data as sample from total 'n' rows of the data  
-sample <- sample.int(n = nrow(model_data), size = floor(.7*nrow(model_data)), replace = F)
-train_data <- model_data[sample, ]
-test_data  <- model_data[-sample, ]
+Sample <- createDataPartition(data$price, p=0.7, list = FALSE)
+Training_data <- data[Sample,] # Training Set
+Testing_data <- data[-Sample,] # Test Set
 ```
 
 <!-- STUDENT 3 AND 4  -->
-<center> <h1><b>5.Machine Learning</b></h1> </center> 
+<center> <h1><b>6.Machine Learning</b></h1> </center> 
 
+### 6.1 Linear Regression
+
+```{r}
+#Build Training Model
+model <- train(price ~ ., data = Training_data,
+               method = "lm",
+               preProcess=c("scale","center"),
+               trControl= trainControl(method="none")
+)
+
+# Apply model for prediction
+model.training <-predict(model, Training_data) # Apply model to predict the diamond pricing of the training set.
+model.testing <-predict(model, Testing_data) # Apply model to predict the diamond pricing of the testing set.
+
+# Model performance
+  # Scatter plot of Training set
+    plot(Training_data$price,model.training, col = "blue" )
+  # Scatter plot of Testing set
+    plot(Testing_data$price,model.testing, col = "blue" )
+```
+
+x-axis represent the actual value and y-axis is the predicted value. From the scatter plot above we can see that they are relatively good correlation for both training and testing set. 
+
+```{r}
+#Model Performance Summary
+    summary(model)
+```
+
+From the performance summary, the variable that influence model the most is carat because the absolute value is at the most followed by clarity and color. The p value with 3 star indicates that the variables are highly significant in predicting the dependent variable.
+
+```{r}
+#Calculate Pearson's correlation coefficient of the actual value and predicted value.
+
+#Pearson's correlation coefficient of Training set
+ corr_training <- cor.test(Training_data$price,model.training, method = "pearson")
+ corr_training
+ 
+#Pearson's correlation coefficient of Testing set 
+ corr_testing <- cor.test(Testing_data$price,model.testing, method = "pearson")
+ corr_testing
+ 
+```
+The correlation coefficient between actual and predicted value for both training and testing set is 0.934 and 0.935 respectively, suggests a strong positive correlation. The p value for the test is smaller than 0.05, thus, the null hypothesis is rejected. 
 
 <!-- STUDENT 1 -->
-<center> <h1><b>6.Conclusion</b></h1> </center>
+<center> <h1><b>7.Conclusion</b></h1> </center>
