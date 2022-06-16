@@ -282,7 +282,7 @@ From the performance summary, the variable that influence model the most is cara
 ```
 The correlation coefficient between actual and predicted value for both training and testing set is 0.934 and 0.935 respectively, suggests a very strong positive correlation. The p value for the test is smaller than 0.05, thus, the null hypothesis is rejected. 
 
-### 6.2 Diamond Cut Classification using Naive Bayes
+### 6.2.1 Diamond Cut Classification using Naive Bayes
 
 ```{r}
 data_cut = read.csv('data/clean_dataset_diamond.csv')
@@ -304,8 +304,6 @@ library(e1071)
 library(caret)
 library(dplyr)
 new_test_data <-dplyr::select(test_data, -cut)
-x_test = new_test_data[,1:9]
-y_test = test_data[[2]]
 
 new_train_data <-dplyr::select(train_data, -cut)
 x= new_train_data[,1:9]
@@ -325,6 +323,34 @@ X<- varImp(model)
 plot(X)
 ```
 The plot above shows that the attribute depth which represents the total depth percentage of a diamond has the highest significant value to predict the cut of the diamond. 
+
+### 6.2.2 Diamond Cut Classification using Decision Trees
+```{r}
+library(caTools)
+library(randomForest)
+
+classifier_RF = randomForest(x = x, y = y, ntree = 500)
+classifier_RF
+```
+Load RandomForest library and set the variables into the RF classifier.
+
+```{r}
+y_pred = predict(classifier_RF, newdata = test_data )
+confusionMatrix(y_pred, test_data$cut)
+```
+Compared to Naive Bayes, Decision Tree achieved higher accuracy with 78.05% in predicting the diamond cut prediction based on all attributes.
+```{r}
+plot(classifier_RF)
+```
+As the number of trees increase, it can be seen that the error rate destablised.
+```{r}
+importance(classifier_RF)
+```
+We can see that the attribute table is the most significant attribute which is then followed by depth. 
+```{r}
+varImpPlot(classifier_RF)
+```
+The plot shows that the attribute table is the most significant feature which is then followed by depth. 
 
 <!-- STUDENT 1 -->
 <center> <h1><b>7.Conclusion</b></h1> </center>
