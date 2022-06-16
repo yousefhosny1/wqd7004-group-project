@@ -324,7 +324,7 @@ plot(X)
 ```
 The plot above shows that the attribute depth which represents the total depth percentage of a diamond has the highest significant value to predict the cut of the diamond. 
 
-### 6.2.2 Diamond Cut Classification using Decision Trees
+### 6.2.2 Diamond Cut Classification using Random Forest
 ```{r}
 library(caTools)
 library(randomForest)
