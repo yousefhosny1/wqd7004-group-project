@@ -280,7 +280,7 @@ From the performance summary, the variable that influence model the most is cara
  corr_testing
  
 ```
-The correlation coefficient between actual and predicted value for both training and testing set is 0.934 and 0.935 respectively, suggests a strong positive correlation. The p value for the test is smaller than 0.05, thus, the null hypothesis is rejected. 
+The correlation coefficient between actual and predicted value for both training and testing set is 0.934 and 0.935 respectively, suggests a very strong positive correlation. The p value for the test is smaller than 0.05, thus, the null hypothesis is rejected. 
 
 <!-- STUDENT 1 -->
 <center> <h1><b>7.Conclusion</b></h1> </center>
