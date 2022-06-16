@@ -303,7 +303,6 @@ library(klaR)
 library(e1071)
 library(caret)
 library(dplyr)
-new_test_data <-dplyr::select(test_data, -cut)
 
 new_train_data <-dplyr::select(train_data, -cut)
 x= new_train_data[,1:9]
@@ -342,15 +341,15 @@ Compared to Naive Bayes, Decision Tree achieved higher accuracy with 78.05% in p
 ```{r}
 plot(classifier_RF)
 ```
-As the number of trees increase, it can be seen that the error rate destablised.
+As the number of trees increase, it can be seen that the error rate destabilize.
 ```{r}
 importance(classifier_RF)
 ```
-We can see that the attribute table is the most significant attribute which is then followed by depth. 
+We can see that the attribute table is the most significant attribute which is then followed by attribute depth. 
 ```{r}
 varImpPlot(classifier_RF)
 ```
-The plot shows that the attribute table is the most significant feature which is then followed by depth. 
+The plot shows that as the MeanDecreaseGini increases, the attribute becomes more significant and in this case, the attribute table is the most significant feature which is then followed by depth. 
 
 <!-- STUDENT 1 -->
 <center> <h1><b>7.Conclusion</b></h1> </center>
