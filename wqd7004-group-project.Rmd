@@ -1,6 +1,6 @@
 ---
 title: "WQD7004 Diamond Price Prediction and Clarity Classification Project"
-author: "Yousef, Nur Iffahtul Najihah Anuar (17155569), Nadia Nadhirah Mahzan (S2107527), Nurul Shahirah Sha'ari (S2120876)"
+author: "Yousef (S2141806), Nur Iffahtul Najihah Anuar (17155569), Nadia Nadhirah Mahzan (S2107527), Nurul Shahirah Sha'ari (S2120876)"
 date: '2022-06-13'
 output: html_document
 ---
@@ -285,6 +285,7 @@ From the performance summary, the variable that influence model the most is cara
  corr_testing <- cor.test(testset$price,model.testing, method = "pearson")
  corr_testing
 ```
+<<<<<<< HEAD
 The correlation coefficient between actual and predicted value for both training and testing set is 0.933 and 0.936 respectively, suggests a strong positive correlation. The p value for the test is smaller than 0.05, thus, the null hypothesis is rejected. We can conclude that our Linear Regression model is statistically significant.
 
 
@@ -296,6 +297,78 @@ head(actuals_prediction)
 ```
 Based on the above output, there is not much difference between the predicted and actual value which means it can predict the price quite well.
 
+=======
+The correlation coefficient between actual and predicted value for both training and testing set is 0.934 and 0.935 respectively, suggests a very strong positive correlation. The p value for the test is smaller than 0.05, thus, the null hypothesis is rejected. 
+
+### 6.2.1 Diamond Cut Classification using Naive Bayes
+
+```{r}
+data_cut = read.csv('data/clean_dataset_diamond.csv')
+library(superml)
+label <- LabelEncoder$new()
+data_cut$color <- label$fit_transform(data_cut$color)
+data_cut$clarity <- label$fit_transform(data_cut$clarity)
+
+set.seed(101)
+sample <- sample.int(n = nrow(data_cut), size = floor(.7*nrow(data_cut)), replace = F)
+train_data <- data_cut[sample, ]
+test_data  <- data_cut[-sample, ]
+```
+The data is being read from the clean_dataset to ensure that the categorical attributes are in their original form. Since we are going to use the 'Cut' variable as the independent variable, other categorical variables are changed into numerical values.
+```{r}
+# classification
+library(klaR)
+library(e1071)
+library(caret)
+library(dplyr)
+
+new_train_data <-dplyr::select(train_data, -cut)
+x= new_train_data[,1:9]
+y= as.factor(train_data$cut)
+
+#naive bayes
+model = train(x, y,'nb',preProcess = c("scale") ,trControl = trainControl(method = 'cv', number=10))
+
+Predict <- predict(model, newdata = test_data)
+test_data$cut <- as.factor( test_data$cut)
+confusionMatrix(Predict, test_data$cut)
+
+```
+Based on the statistics above, an accuracy of 62.98% is achieved. In terms of sensitivity, 'Ideal class' has the highest sensitivity and 'Very Good' class has the lowest sensitivity.
+```{r}
+X<- varImp(model)
+plot(X)
+```
+The plot above shows that the attribute depth which represents the total depth percentage of a diamond has the highest significant value to predict the cut of the diamond. 
+
+### 6.2.2 Diamond Cut Classification using Random Forest
+```{r}
+library(caTools)
+library(randomForest)
+
+classifier_RF = randomForest(x = x, y = y, ntree = 500)
+classifier_RF
+```
+Load RandomForest library and set the variables into the RF classifier.
+
+```{r}
+y_pred = predict(classifier_RF, newdata = test_data )
+confusionMatrix(y_pred, test_data$cut)
+```
+Compared to Naive Bayes, Decision Tree achieved higher accuracy with 78.05% in predicting the diamond cut prediction based on all attributes.
+```{r}
+plot(classifier_RF)
+```
+As the number of trees increase, it can be seen that the error rate destabilize.
+```{r}
+importance(classifier_RF)
+```
+We can see that the attribute table is the most significant attribute which is then followed by attribute depth. 
+```{r}
+varImpPlot(classifier_RF)
+```
+The plot shows that as the MeanDecreaseGini increases, the attribute becomes more significant and in this case, the attribute table is the most significant feature which is then followed by depth. 
+>>>>>>> 6dc28f7c9738d8b82bebc3dac877b25c0930fcf1
 
 <!-- STUDENT 1 -->
 <center> <h1><b>7.Conclusion</b></h1> </center>
