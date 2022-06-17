@@ -30,7 +30,7 @@ Another category of diamonds that are currently becoming a trend among diamond j
 
 •	**Year**: 2017
 
-•	**Sources**: Kaggle Website (https://www.kaggle.com/datasets/shivam2503/diamonds?datasetId=1312&sortBy=voteCount&searchQuery=class)
+•	**Source**: Kaggle Website (https://www.kaggle.com/datasets/shivam2503/diamonds?datasetId=1312&sortBy=voteCount&searchQuery=class)
 
 •	**Purpose of Dataset**: A great simple dataset for beginners who is learning to work in data analysis and visualization. 
 
@@ -56,15 +56,18 @@ Another category of diamonds that are currently becoming a trend among diamond j
 <!-- STUDENT 1 -->
 <center> <h1><b>3.Problem Statement</b></h1> </center>
 
-Diamond gems is one of the most popular gems in entire world. This valuable gem can be worth from as low as hundreds and up to millions. However, no clear understanding of why and how diamond gems can be so expensive. Therefore, exploring which attributes determine the value of a diamond gems may helps with predicting the price of the diamonds.
+Diamond gems is one of the most popular gems in entire world. This valuable gem can be worth from as low as hundreds and up to millions. However, no clear guidelines or understanding on the determination of diamond’s price in the market. Therefore, exploring which attributes determine the value of a diamond gems may helps with predicting the price of the diamonds.
 
 <center> <h1><b>4.Objectives</b></h1> </center>
 
 **Objectives**
 
-* 1. To predict the price of diamond gems from corresponding attributes. 
+* 1. To explore which attributes contribute to the price range in diamond gems.
 
-* 2. To explore which attributes contribute to the price range in diamond gems. 
+* 2. To predict the price of diamond gems from corresponding attributes.
+
+* 3. To determine the characteristics that affect the cut of the diamond.
+
 
 <center> <h1><b>5.Data Exploration and Preprocessing</b></h1> </center>
 ### 5.1 First look at the data 
@@ -238,9 +241,9 @@ Testing_data <- data[-Sample,] # Test Set
 <!-- STUDENT 3 AND 4  -->
 <center> <h1><b>6.Machine Learning</b></h1> </center> 
 
-### 6.1 Linear Regression
+### 6.1 Diamond price Prediction
 
-The Linear Regression algorithm is used to predict the diamond price and to determine which attribute affects the most.
+The **Linear Regression** algorithm is used to predict the diamond price and to determine which attribute affects the most.
 
 ```{r}
 #Load training and testing dataset
@@ -285,7 +288,6 @@ From the performance summary, the variable that influence model the most is cara
  corr_testing <- cor.test(testset$price,model.testing, method = "pearson")
  corr_testing
 ```
-<<<<<<< HEAD
 The correlation coefficient between actual and predicted value for both training and testing set is 0.933 and 0.936 respectively, suggests a strong positive correlation. The p value for the test is smaller than 0.05, thus, the null hypothesis is rejected. We can conclude that our Linear Regression model is statistically significant.
 
 
@@ -296,9 +298,6 @@ correlation_accuracy <- cor(actuals_prediction)
 head(actuals_prediction)
 ```
 Based on the above output, there is not much difference between the predicted and actual value which means it can predict the price quite well.
-
-=======
-The correlation coefficient between actual and predicted value for both training and testing set is 0.934 and 0.935 respectively, suggests a very strong positive correlation. The p value for the test is smaller than 0.05, thus, the null hypothesis is rejected. 
 
 ### 6.2.1 Diamond Cut Classification using Naive Bayes
 
@@ -368,7 +367,6 @@ We can see that the attribute table is the most significant attribute which is t
 varImpPlot(classifier_RF)
 ```
 The plot shows that as the MeanDecreaseGini increases, the attribute becomes more significant and in this case, the attribute table is the most significant feature which is then followed by depth. 
->>>>>>> 6dc28f7c9738d8b82bebc3dac877b25c0930fcf1
 
 <!-- STUDENT 1 -->
 <center> <h1><b>7.Conclusion</b></h1> </center>
